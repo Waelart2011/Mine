@@ -24,7 +24,7 @@ class MainActivity : Activity() {
     private lateinit var address: EditText
     private lateinit var webView: WebView
     private lateinit var status: TextView
-    private lateinit var progress: ProgressBar
+    private lateinit var loadingBar: ProgressBar
 
     private val prefs by lazy {
         getSharedPreferences("panel", Context.MODE_PRIVATE)
@@ -141,8 +141,8 @@ class MainActivity : Activity() {
     private fun showWebView(url: String) {
         val frame = FrameLayout(this)
 
-        // تهيئة شريط التقدم قبل استخدامه داخل WebViewClient
-        progress = ProgressBar(this).apply {
+        // تهيئة شريط التحميل قبل إعداد WebViewClient
+        loadingBar = ProgressBar(this).apply {
             isIndeterminate = true
             visibility = View.GONE
         }
@@ -160,14 +160,14 @@ class MainActivity : Activity() {
                     favicon: android.graphics.Bitmap?
                 ) {
                     status.text = "جارٍ الاتصال..."
-                    progress.visibility = View.VISIBLE
+                    loadingBar.visibility = View.VISIBLE
                 }
 
                 override fun onPageFinished(
                     view: WebView?,
                     url: String?
                 ) {
-                    progress.visibility = View.GONE
+                    loadingBar.visibility = View.GONE
                     status.text = "تم تحميل الصفحة"
                 }
 
@@ -177,7 +177,7 @@ class MainActivity : Activity() {
                     error: android.webkit.WebResourceError?
                 ) {
                     if (request?.isForMainFrame == true) {
-                        progress.visibility = View.GONE
+                        loadingBar.visibility = View.GONE
                         status.text =
                             "تعذر الاتصال. تحقق من الرابط والشبكة وتشغيل لوحة الويب."
                     }
@@ -233,7 +233,7 @@ class MainActivity : Activity() {
         )
 
         frame.addView(
-            progress,
+            loadingBar,
             FrameLayout.LayoutParams(
                 dp(42),
                 dp(42),
@@ -255,7 +255,7 @@ class MainActivity : Activity() {
 
         setContentView(root)
 
-        progress.visibility = View.VISIBLE
+        loadingBar.visibility = View.VISIBLE
         webView.loadUrl(url)
     }
 
